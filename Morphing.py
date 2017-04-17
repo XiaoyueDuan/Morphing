@@ -50,7 +50,8 @@ class morphing:
         inter=interpolator()
         for r in dissolve_ratio:
             midPos = inter.interpolate(self.startPos,self.terminatePos,r)
-        
+            
+            
 
     
 class interpolator:
@@ -71,7 +72,7 @@ class Calculator:
     """
     Calculate: u, v, X'
     """    
-    def __init__(self,  sourcePos, targetPos):
+    def __init__(self, sourcePos, targetPos):
         """ 
         input:
             sourcePos: n*4 narray 
@@ -131,6 +132,41 @@ class Calculator:
         
         newX=self.tP+np.dot(u,self.tQminstP)+np.dot(v,OrthoQminusP)/self.tQPdist
         return newX
+    
+    def offset(self,newX,X):
+        """ 
+        function description:
+            calculate the offset = X'-X
+        input:
+            newX- [x2,y2]
+            X- [x1,y1]
+        return:
+            (X'-X)- [x2-x1,y2-y1]
+        """
+        return newX-X
+    
+    def X_PQdist(self,X):
+        """ 
+        function description:
+            calculate the distance from X to all PQs(perpendicular distance)
+        input:
+            X=[x,y]
+        return:
+            distance- a n*2 narray
+        """
+        distance=np.abs(np.cross(X,self.QminP))
+        return distance
+    
+    def PQlength(self):
+        """ 
+        function description:
+            calculate the length of PQs
+        input:
+            
+        return:
+            |PQs|- a (n,) vector
+        """
+        return np.linalg.norm(self.QminP)
                 
 class Perpend:
     """
@@ -157,8 +193,7 @@ class Perpend:
        # only valid ones will calculate its perpendicular vector
        return perpend_vectors    
                        
-       
-        
+class 
         
         
         
