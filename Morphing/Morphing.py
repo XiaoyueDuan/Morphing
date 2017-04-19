@@ -2,10 +2,11 @@
 """
 Created on Sun Apr 16 10:58:28 2017
 
-@author: Administrator
+@author: Xiaoyue Duan
 """
 
 import numpy as np
+import ImageSaving as iSaver
 
 class dis_inter_alg:
     """ 
@@ -56,19 +57,48 @@ class morphing:
         self.b=dis_inter_alg.b
         self.p=dis_inter_alg.p
         
-        self.morphSize=dis_inter_alg.framePerSecond*dis_inter_alg.timeDur        
+        self.morphSize=dis_inter_alg.framePerSecond*dis_inter_alg.timeDur   
         
+        self.__savePath=""
+        self.__sourceImgName=""     
+        self.__targetImgName=""     
+        
+    def setImgName(self,path):
+        """
+        Function Description:
+            name- string, the path for image to be saved    
+        """
+        self.__savePath=path
+
+    def setImgName(self,name,type="source"):
+        """
+        Function Description:
+            name- string, the name to be assigned to source or target image
+            type- string, two option:"source" or "target"
+        """
+        if type=="source":
+            self.__sourceImgName=name
+        elif type=="target":
+            self.__targetImgName=name
+
     def LinerMorphing(self):
         dissolve_ratio=np.linspace(1.0, 0.0, num=self.morphSize)
         inter=interpolator()
 
-        source_mid_proc=TargetImage(self.startPos,self.terminatePos,self.sourceImg) # Initialize source image processor
+        # Initialize a source image processor
+        source_mid_proc=TargetImage(self.startPos,self.terminatePos,self.sourceImg) 
         source_mid_proc.set_a_p_b(self.a,self.b,self.p)
+        sImgSaver=iSaver.BatchImageSaving(self.__savePath,self.__sourceImgName)
 
-        target_mid_proc=TargetImage(self.startPos,self.terminatePos,self.targetImg) # Initialize target image processor
+        # Initialize a target image processor
+        target_mid_proc=TargetImage(self.startPos,self.terminatePos,self.targetImg) 
         target_mid_proc.set_a_p_b(self.a,self.b,self.p)
+        tImgSaver=iSaver.BatchImageSaving(self.__savePath,self.__targetImgName)
 
-        for r in dissolve_ratio:
+        # Initialize a result image saver
+        rImgSaver=iSaver.BatchImageSaving(self.__savePath,'result')
+        
+        for idx,r in enumerate(dissolve_ratio):
             midPos = inter.interpolate(self.startPos,self.terminatePos,r)
             
             source_mid_proc.set_Calculator(self.startPos,midPos)
@@ -78,6 +108,11 @@ class morphing:
             target_mid_img=target_mid_proc.targetImage()
 
             midImg=np.around(source_mid_img*r+target_mid_img*(1-r))
+
+            # Save images
+            sImgSaver.save(source_mid_img,idx)
+            tImgSaver.save(target_mid_img,idx)
+            rImgSaver.save(midImg,idx)
     
 class interpolator:
     """"Interpolation method"""
