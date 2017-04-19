@@ -8,10 +8,13 @@ Created on Sun Apr 16 10:58:28 2017
 import numpy as np
 
 class dis_inter_alg:
-    """ Interface between the displaying and the algorithm
-    including: source and target images;
-                a, b and p
-                frame per second and time duration
+    """ 
+    Class Description:
+        Interface between the displaying and the algorithm
+    including:
+        - source and target images;
+        - a, b and p
+        - frame per second and time duration
     """
     def __init__(self):
         self.sourceImg=0
@@ -33,6 +36,16 @@ class dis_inter_alg:
 
 class morphing:
     def __init__(self, dis_inter_alg):
+        """
+        Function Description:
+            
+        Attribute:
+            a ~ [0, inf]
+            b ~ [0.5, 2]
+            p ~ [0, 1]
+        Input:
+
+        """
         self.sourceImg=dis_inter_alg.sourceImg
         self.targetImg=dis_inter_alg.targetImg
         
@@ -46,13 +59,25 @@ class morphing:
         self.morphSize=dis_inter_alg.framePerSecond*dis_inter_alg.timeDur        
         
     def LinerMorphing(self):
-        dissolve_ratio=np.linspace(0.0, 1.0, num=self.morphSize)
+        dissolve_ratio=np.linspace(1.0, 0.0, num=self.morphSize)
         inter=interpolator()
+
+        source_mid_proc=TargetImage(self.startPos,self.terminatePos,self.sourceImg) # Initialize source image processor
+        source_mid_proc.set_a_p_b(self.a,self.b,self.p)
+
+        target_mid_proc=TargetImage(self.startPos,self.terminatePos,self.targetImg) # Initialize target image processor
+        target_mid_proc.set_a_p_b(self.a,self.b,self.p)
+
         for r in dissolve_ratio:
             midPos = inter.interpolate(self.startPos,self.terminatePos,r)
             
-            
+            source_mid_proc.set_Calculator(self.startPos,midPos)
+            source_mid_img=source_mid_proc.targetImage()
 
+            target_mid_proc.set_Calculator(self.terminatePos,midPos)
+            target_mid_img=target_mid_proc.targetImage()
+
+            midImg=np.around(source_mid_img*r+target_mid_img*(1-r))
     
 class interpolator:
     """"Interpolation method"""
@@ -70,7 +95,7 @@ class interpolator:
             
 class Calculator:
     """
-    Calculate: u, v, X'
+    Calculate: u, v, Xi'(line_wise) and etc.
     """    
     def __init__(self, sourcePos, targetPos):
         """ 
@@ -152,7 +177,7 @@ class Calculator:
         input:
             X=[x,y]
         return:
-            distance- a n*2 narray
+            distance- a (n,) narray
         """
         distance=np.abs(np.cross(X,self.QminP))
         return distance
@@ -167,7 +192,7 @@ class Calculator:
             |PQs|- a (n,) vector
         """
         return np.linalg.norm(self.QminP)
-                
+                    
 class Perpend:
     """
     Calculate: Perpendicular(Q-P), which is orthogonal to (Q-P) as well as same length of (Q-P)
@@ -193,7 +218,103 @@ class Perpend:
        # only valid ones will calculate its perpendicular vector
        return perpend_vectors    
                        
-class 
-        
-        
-        
+class TargetImage:
+    """
+    Class description:
+        Calculate all position in Target Image 
+    
+    """    
+    def __init__(self, sourcePos, targetPos, sourceImg):
+        """
+        Function Description:
+        Input:
+            sourcePos- (n,4) narray
+            targetPos- (n,4) narray
+            sourceImg- (rows, cols, 3) int narray(if RGB)
+        """
+        self.__calculator=Calculator(sourcePos, targetPos)
+        self.__img=sourceImg
+
+        self.__a=0.5
+        self.__p=0
+        self.__b=0.5
+
+    def set_a_p_b(self,a,p,b):
+        self.__a=a
+        self.__b=b
+        self.__p=p
+    
+    def set_Calculator(self, sourcePos, targetPos):
+        """
+        Function Description:
+        Input:
+            sourcePos- (n,4) narray
+            targetPos- (n,4) narray
+
+        """
+        self.__calculator=Calculator(sourcePos, targetPos)
+
+    def set_Img(self, img):
+        """
+        Input:    
+            img- (rows, cols, 3) int narray(if RGB)
+        """
+        self.__img=img
+
+    def targetImage(self):
+        """ 
+        Function description:
+            Calculate Target Image corresponding to Source Image
+        input:
+        return:
+            targetImage- (row, col, 3), int narray, the target image
+        """
+        imgSize=self.__img.shape[:-1] # shape of first 2 dimension
+        targetImage=np.zeros_like(self.__img)
+        for i,j in zip(range(imgSize[0]),range(imgSize[1])):
+            X=np.array([i,j])
+            newX=self.__position_pixel_wise(X)
+            targetImage[i,j,:]=self.__img[newX,:]
+
+        return targetImage
+
+    def __position_pixel_wise(self,X):
+        """ 
+        Function description:
+            Calculate the position in Target Image corresponding to (row, col) which in Source Image
+        input:
+            X- (row, col), int narray 
+        return:
+            newX- X', (int, int)
+        """
+        u=self.__calculator.calU(X)
+        v=self.__calculator.calV(X)
+        newX_wise=self.__calculator.calNewX(u,v)
+        D=self.__calculator.offset(newX_wise,X)
+
+        dist=self.__calculator.X_PQdist(X)
+        length=self.__calculator.PQlength()
+        weight=self.weight(dist,length)
+
+        weightSum=np.sum(weight)            # float
+        Dsum=np.sum(np.multiply(D,weight))  # float (x,y)
+
+        newX =np.around(X + Dsum/weightSum)
+        return newX
+
+    def weight(self, dist, length):
+        """ 
+        Function description:
+            Calculate weight = ( (length)^p / (a+dist) )^b
+        input:
+            dist- the distance from X to PQ, (n,) narray
+            length- length of PQ, (n,) narray
+        return:
+            weight- a (n,) vector
+        """
+        r1=np.power(length,self.__p)   # (length)^p
+        r2=self.__a+dist               # (a+dist)
+        r3=r1/r2                       # (length)^p / (a+dist)
+        weight=np.power(r3,self.__b)       # ( (length)^p / (a+dist) )^b    
+
+        return weight
