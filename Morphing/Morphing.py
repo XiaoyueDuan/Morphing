@@ -30,7 +30,7 @@ class dis_inter_alg:
         
         self.framePerSecond=0
         self.timeDur=0
-        
+
     def convertImg(self,rawSourImg,rawTarImg):
         self.sourceImg=rawSourImg
         self.targetImg=rawTarImg
@@ -88,13 +88,13 @@ class morphing:
         # Initialize a source image processor
         source_mid_proc=TargetImage(self.startPos,self.terminatePos,self.sourceImg) 
         source_mid_proc.set_a_p_b(self.a,self.b,self.p)
-        sImgSaver=iSaver.BatchImageSaving(self.__savePath,self.__sourceImgName)
 
         # Initialize a target image processor
         target_mid_proc=TargetImage(self.startPos,self.terminatePos,self.targetImg) 
         target_mid_proc.set_a_p_b(self.a,self.b,self.p)
-        tImgSaver=iSaver.BatchImageSaving(self.__savePath,self.__targetImgName)
 
+        sImgSaver=iSaver.BatchImageSaving(self.__savePath,self.__sourceImgName)
+        tImgSaver=iSaver.BatchImageSaving(self.__savePath,self.__targetImgName)
         # Initialize a result image saver
         rImgSaver=iSaver.BatchImageSaving(self.__savePath,'result')
         

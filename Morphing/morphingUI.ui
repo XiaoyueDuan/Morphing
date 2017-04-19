@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>852</width>
+    <height>567</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Morphing Program</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>20</y>
+      <width>331</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="SourceImg">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QGroupBox" name="sourceImg">
+       <property name="title">
+        <string>Source Image</string>
+       </property>
+       <zorder>horizontalLayoutWidget</zorder>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>240</y>
+      <width>331</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="source_load">
+       <property name="text">
+        <string>Load</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="source_draw">
+       <property name="text">
+        <string>Draw</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="source_finish">
+       <property name="text">
+        <string>Finish</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>510</y>
+      <width>331</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="target_load">
+       <property name="text">
+        <string>Load</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="target_draw">
+       <property name="text">
+        <string>Draw</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="target_finish">
+       <property name="text">
+        <string>Finish</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>290</y>
+      <width>331</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="SourceImg_2">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QGroupBox" name="targetImg">
+       <property name="title">
+        <string>Target Image</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>20</y>
+      <width>441</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="Result">
+     <item>
+      <widget class="QGroupBox" name="result">
+       <property name="title">
+        <string>Result Image</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>350</y>
+      <width>441</width>
+      <height>191</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="Parameters">
+     <item row="0" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QLabel" name="time">
+         <property name="text">
+          <string>time:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="timSpinBox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="second">
+         <property name="text">
+          <string>s</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="a">
+         <property name="text">
+          <string>a:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="aSlider">
+         <property name="singleStep">
+          <number>5</number>
+         </property>
+         <property name="pageStep">
+          <number>20</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QLabel" name="speed">
+         <property name="text">
+          <string>speed:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="speedSpinBox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="frame_per_second">
+         <property name="text">
+          <string>f/s</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLabel" name="b">
+         <property name="text">
+          <string>b:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="bSlider">
+         <property name="minimum">
+          <number>5</number>
+         </property>
+         <property name="maximum">
+          <number>20</number>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+         <property name="pageStep">
+          <number>5</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="2" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QLabel" name="p">
+         <property name="text">
+          <string>p:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="pSlider">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
+         <property name="pageStep">
+          <number>20</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="2" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <widget class="QPushButton" name="save">
+         <property name="text">
+          <string>Save</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="play">
+         <property name="text">
+          <string>Play</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
