@@ -6,8 +6,8 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.Qt import QFileDialog
+import sys
+from PyQt5 import QtCore, QtWidgets, QtGui
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -57,7 +57,6 @@ class Ui_MainWindow(object):
         self.source_load_button = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         self.source_load_button.setObjectName("source_load_button")
         self.SourceImgButtons_layout.addWidget(self.source_load_button)
-        self.source_load_button.clicked.connect(self.getImage)# HHHHHHHHHHHH
 
         self.source_draw_button = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         self.source_draw_button.setObjectName("source_draw_button")
@@ -293,18 +292,45 @@ class Ui_MainWindow(object):
         self.save_button.setText(_translate("MainWindow", "Save"))
         self.play_button.setText(_translate("MainWindow", "Play"))
 
-    def getImage(self,title='Open Image'):
-        #imgName=QFileDialog.getOpenFileName(self, title, '..\\Image',"Image files (*.jpg *.gif)")
-        imgName=getOpenFileName(this, tr("Open Image"), "c:\\", tr("Image Files (*.png *.jpg *.bmp)"))
+class Ui_AddEvent(QtWidgets.QMainWindow):
+    def __init__(self):
+         QtWidgets.QMainWindow.__init__(self)
+         self.ui=Ui_MainWindow()
+         self.ui.setupUi(self)
+         self.__addEvent()
 
+    def __addEvent(self):
+        self.ui.source_load_button.clicked.connect(lambda: self.__getImage(self.ui.sourceImgPos_label))
+        self.ui.target_load_button.clicked.connect(lambda: self.__getImage(self.ui.targetImgPos_label))
 
+    def __getImage(self,Pos_label):
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.DontUseNativeDialog
+        imgName, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Open Image',
+                                                           "..\\Image",
+                                                           "Image Files (*.png *.jpg *.bmp)",
+                                                           options=options)
+        
+        pixmap=QtGui.QPixmap(imgName)
+        scaled_pixmap=pixmap.scaled(Pos_label.width(),Pos_label.height(), 1)
+        #pixmap.QtGui.QPixmap(Pos_label.width(),Pos_label.height())
+        
+        #pixmap.width=Pos_label.width()
+        #pixmap.height=Pos_label.height()
+
+        Pos_label.setPixmap(scaled_pixmap)
 
 if __name__ == "__main__":
-    import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    window = Ui_AddEvent()
+    window.show()
     sys.exit(app.exec_())
+
+#if __name__ == "__main__":    
+#    app = QtWidgets.QApplication(sys.argv)
+#    MainWindow = QtWidgets.QMainWindow()
+#    ui = Ui_MainWindow()
+#    ui.setupUi(MainWindow)
+#    MainWindow.show()
+#    sys.exit(app.exec_())
 

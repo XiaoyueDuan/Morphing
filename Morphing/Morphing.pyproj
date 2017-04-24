@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d162c2b2-5369-4757-9c0c-6d89336683cd</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>morphingUI.py</StartupFile>
+    <StartupFile>uiTest.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -27,6 +27,9 @@
     </Compile>
     <Compile Include="Morphing.py" />
     <Compile Include="morphingUI.py" />
+    <Compile Include="uiTest.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
