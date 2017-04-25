@@ -8,6 +8,7 @@
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
+from Morphing import Interface
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -34,6 +35,8 @@ class Ui_MainWindow(object):
         self.SourceImg_layout.addWidget(self.sourceImg_groupbox)
 
         self.sourceImg_PictureView=PictureView(self)
+        self.sourceImg_PictureView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.sourceImg_PictureView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.SourceImg_layout.addWidget(self.sourceImg_PictureView)
         ##########################################################################
 
@@ -75,6 +78,8 @@ class Ui_MainWindow(object):
         self.TargetImg_layout.addWidget(self.targetImg_groupbox)
 
         self.targetImg_PictureView=PictureView(self)
+        self.targetImg_PictureView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.targetImg_PictureView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.TargetImg_layout.addWidget(self.targetImg_PictureView)
         ##########################################################################
 
@@ -205,6 +210,7 @@ class Ui_AddEvent(QtWidgets.QMainWindow):
          self.ui.setupUi(self)
 
          self.__addEvent()
+         self.interface=Interface()
 
     def __addEvent(self):
         self.ui.source_load_button.clicked.connect(lambda: self.__getImage(self.ui.sourceImg_PictureView))
@@ -212,6 +218,16 @@ class Ui_AddEvent(QtWidgets.QMainWindow):
 
         self.ui.source_clear_button.clicked.connect(lambda: self.__clearView(self.ui.sourceImg_PictureView))
         self.ui.target_clear_button.clicked.connect(lambda: self.__clearView(self.ui.targetImg_PictureView))
+
+        
+        self.ui.a_slider.valueChanged.connect(lambda:self.__getScollBarValue(self.ui.a_slider,self.ui.a_label))        
+        b_scale=10
+        self.ui.b_Slider.valueChanged.connect(lambda:self.__getScollBarValue(self.ui.b_Slider,self.ui.b_label,b_scale))
+        p_scale=self.ui.p_Slider.maximum()
+        self.ui.p_Slider.valueChanged.connect(lambda:self.__getScollBarValue(self.ui.p_Slider,self.ui.p_label,p_scale))
+
+        self.ui.time_SpinBox.valueChanged.connect(lambda:self.__getSpinBoxValue(self.ui.time_SpinBox))
+        self.ui.speed_spinBox.valueChanged.connect(lambda:self.__getSpinBoxValue(self.ui.speed_spinBox))
 
     def __getImage(self,PictureView):
         options = QtWidgets.QFileDialog.Options()
@@ -221,11 +237,21 @@ class Ui_AddEvent(QtWidgets.QMainWindow):
                                                            "Image Files (*.png *.jpg *.bmp)",
                                                            options=options)   
         pixmap = QtGui.QPixmap(imgName)
-        pixItem = QtWidgets.QGraphicsPixmapItem(pixmap)
+        scaled_pixmap=pixmap.scaled(PictureView.width(),PictureView.height(), 1)
+        pixItem = QtWidgets.QGraphicsPixmapItem(scaled_pixmap)        
+
         PictureView.scene().addItem(pixItem)
+        self.interface.setSourceImg(pixmap)
     
     def __clearView(self,PictureView):
         PictureView.scene().clear()
+
+    def __getScollBarValue(self,ScollBar,ChangeWeidge,scale=1):
+        value=float(ScollBar.value())/float(scale)
+        ChangeWeidge.setText(str(value))
+
+    def __getSpinBoxValue(self,SpinBox,scale=1):
+        print(SpinBox.value())    
 
 class PictureView(QtWidgets.QGraphicsView):
     def __init__(self,parent):

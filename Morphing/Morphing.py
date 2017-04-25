@@ -8,7 +8,7 @@ Created on Sun Apr 16 10:58:28 2017
 import numpy as np
 import ImageSaving as iSaver
 
-class dis_inter_alg:
+class Interface:
     """ 
     Class Description:
         Interface between the displaying and the algorithm
@@ -21,8 +21,8 @@ class dis_inter_alg:
         self.sourceImg=0
         self.targetImg=0
         
-        self.startPos=0
-        self.terminatePos=0
+        self.startPos=np.array([[-1,-1,-1,-1]])
+        self.terminatePos=np.array([[-1,-1,-1,-1]])
         
         self.a=0
         self.b=0
@@ -34,6 +34,39 @@ class dis_inter_alg:
     def convertImg(self,rawSourImg,rawTarImg):
         self.sourceImg=rawSourImg
         self.targetImg=rawTarImg
+
+    def setA(self,a):
+        self.a=a
+
+    def setB(self,b):
+        self.b=b
+
+    def setP(self,p):
+        self.p=p
+
+    def setFramePerSecond(self,fps):
+        self.framePerSecond=fps
+
+    def setTimeDur(self,timeDur):
+        self.timeDur=timeDur
+
+    def setStartPos(Pos=None,Empty_signal=False):
+        if Empty_signal:
+            self.startPos=np.array([[-1,-1,-1,-1]]) 
+            return
+        self.startPos=np.concatenate((self.startPos, Pos), axis=0)
+
+    def setTerminatePos(Pos=None,Empty_signal=False):
+        if Empty_signal:
+            self.terminatePos=np.array([[-1,-1,-1,-1]])
+            return
+        self.terminatePos=np.concatenate((self.terminatePos,Pos),axis=0)
+
+    def setSourceImg(self,SourceImg):
+        self.sourceImg=SourceImg
+    
+    def setTargetImg(self,TargetImg):
+        self.targetImg=TargetImage
 
 class morphing:
     def __init__(self, dis_inter_alg):
