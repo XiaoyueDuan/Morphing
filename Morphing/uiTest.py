@@ -40,7 +40,7 @@ class Ui_MainWindow(object):
         MainWindow.resize(850, 560)
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setGeometry(QtCore.QRect(30, 20, 500, 210))
+        self.centralwidget.setGeometry(QtCore.QRect(30, 20, 500, 300))
         self.centralwidget.setObjectName("centralwidget")
 
         self.view= View(self)
@@ -61,13 +61,15 @@ class Main(QtWidgets.QMainWindow):
          self.ui=Ui_MainWindow()
          self.ui.setupUi(self)
 
-         #self.ui.dirButton.clicked.connect(self.browse)
-
 class View(QtWidgets.QGraphicsView):
     def __init__(self,parent):
         QtWidgets.QGraphicsView.__init__(self)
         self.setScene(QtWidgets.QGraphicsScene(self))
         self.setSceneRect(QtCore.QRectF(self.viewport().rect()))
+
+        pixmap = QtGui.QPixmap("..\Image\source.jpg")
+        pixItem = QtWidgets.QGraphicsPixmapItem(pixmap)
+        self.scene().addItem(pixItem)
 
     def mousePressEvent(self, event):
         self._start = event.pos()
@@ -75,8 +77,10 @@ class View(QtWidgets.QGraphicsView):
     def mouseReleaseEvent(self, event):
         start = QtCore.QPointF(self.mapToScene(self._start))
         end = QtCore.QPointF(self.mapToScene(event.pos()))
+        
         self.scene().addItem(
-            QtWidgets.QGraphicsLineItem(QtCore.QLineF(start, end)))
+            QtWidgets.QGraphicsLineItem(QtCore.QLineF(start, end)))        
+        
         for point in (start, end):
             text = self.scene().addSimpleText(
                 '(%d, %d)' % (point.x(), point.y()))

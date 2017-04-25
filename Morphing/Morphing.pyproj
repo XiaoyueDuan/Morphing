@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d162c2b2-5369-4757-9c0c-6d89336683cd</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>uiTest.py</StartupFile>
+    <StartupFile>demoUI.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,11 +22,18 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="basicdrawing_rc.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="demoUI.py" />
     <Compile Include="ImageSaving.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Morphing.py" />
     <Compile Include="morphingUI.py" />
+    <Compile Include="basicdrawing.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="uiTest.py">
       <SubType>Code</SubType>
     </Compile>

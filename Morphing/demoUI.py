@@ -6,6 +6,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
@@ -22,19 +23,20 @@ class Ui_MainWindow(object):
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(30, 20, 331, 211))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+
+        ##########################################################################
         self.SourceImg_layout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.SourceImg_layout.setContentsMargins(0, 0, 0, 0)
         self.SourceImg_layout.setSpacing(10)
         self.SourceImg_layout.setObjectName("SourceImg_layout")
         self.sourceImg_groupbox = QtWidgets.QGroupBox(self.verticalLayoutWidget)
-        self.sourceImg_groupbox.setObjectName("sourceImg_groupbox")
-        self.sourceImgPos_label = QtWidgets.QLabel(self.sourceImg_groupbox)
-        self.sourceImgPos_label.setGeometry(QtCore.QRect(10, 10, 310, 190))
-        self.sourceImgPos_label.setTextFormat(QtCore.Qt.AutoText)
-        self.sourceImgPos_label.setScaledContents(False)
-        self.sourceImgPos_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.sourceImgPos_label.setObjectName("sourceImgPos_label")
+        self.sourceImg_groupbox.setObjectName("sourceImg_groupbox")        
         self.SourceImg_layout.addWidget(self.sourceImg_groupbox)
+
+        self.sourceImg_PictureView=PictureView(self)
+        self.SourceImg_layout.addWidget(self.sourceImg_PictureView)
+        ##########################################################################
+
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(30, 240, 331, 31))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
@@ -44,12 +46,9 @@ class Ui_MainWindow(object):
         self.source_load_button = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         self.source_load_button.setObjectName("source_load_button")
         self.SourceImgButtons_layout.addWidget(self.source_load_button)
-        self.source_draw_button = QtWidgets.QPushButton(self.horizontalLayoutWidget)
-        self.source_draw_button.setObjectName("source_draw_button")
-        self.SourceImgButtons_layout.addWidget(self.source_draw_button)
-        self.source_finish_button = QtWidgets.QPushButton(self.horizontalLayoutWidget)
-        self.source_finish_button.setObjectName("source_finish_button")
-        self.SourceImgButtons_layout.addWidget(self.source_finish_button)
+        self.source_clear_button = QtWidgets.QPushButton(self.horizontalLayoutWidget)
+        self.source_clear_button.setObjectName("source_clear_button")
+        self.SourceImgButtons_layout.addWidget(self.source_clear_button)
         self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(30, 510, 331, 31))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
@@ -59,28 +58,26 @@ class Ui_MainWindow(object):
         self.target_load_button = QtWidgets.QPushButton(self.horizontalLayoutWidget_2)
         self.target_load_button.setObjectName("target_load_button")
         self.TargetImgButtons_layout.addWidget(self.target_load_button)
-        self.target_draw_button = QtWidgets.QPushButton(self.horizontalLayoutWidget_2)
-        self.target_draw_button.setObjectName("target_draw_button")
-        self.TargetImgButtons_layout.addWidget(self.target_draw_button)
-        self.target_finish_button = QtWidgets.QPushButton(self.horizontalLayoutWidget_2)
-        self.target_finish_button.setObjectName("target_finish_button")
-        self.TargetImgButtons_layout.addWidget(self.target_finish_button)
+        self.target_clear_button = QtWidgets.QPushButton(self.horizontalLayoutWidget_2)
+        self.target_clear_button.setObjectName("target_clear_button")
+        self.TargetImgButtons_layout.addWidget(self.target_clear_button)
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(30, 290, 331, 211))
         self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
+
+        ##########################################################################
         self.TargetImg_layout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
         self.TargetImg_layout.setContentsMargins(0, 0, 0, 0)
         self.TargetImg_layout.setSpacing(10)
         self.TargetImg_layout.setObjectName("TargetImg_layout")
         self.targetImg_groupbox = QtWidgets.QGroupBox(self.verticalLayoutWidget_2)
         self.targetImg_groupbox.setObjectName("targetImg_groupbox")
-        self.targetImgPos_label = QtWidgets.QLabel(self.targetImg_groupbox)
-        self.targetImgPos_label.setGeometry(QtCore.QRect(10, 10, 310, 190))
-        self.targetImgPos_label.setTextFormat(QtCore.Qt.AutoText)
-        self.targetImgPos_label.setScaledContents(False)
-        self.targetImgPos_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.targetImgPos_label.setObjectName("targetImgPos_label")
         self.TargetImg_layout.addWidget(self.targetImg_groupbox)
+
+        self.targetImg_PictureView=PictureView(self)
+        self.TargetImg_layout.addWidget(self.targetImg_PictureView)
+        ##########################################################################
+
         self.verticalLayoutWidget_3 = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(380, 20, 441, 311))
         self.verticalLayoutWidget_3.setObjectName("verticalLayoutWidget_3")
@@ -89,10 +86,6 @@ class Ui_MainWindow(object):
         self.ResultImg_layout.setObjectName("ResultImg_layout")
         self.resultImg_groupbox = QtWidgets.QGroupBox(self.verticalLayoutWidget_3)
         self.resultImg_groupbox.setObjectName("resultImg_groupbox")
-        self.label = QtWidgets.QLabel(self.resultImg_groupbox)
-        self.label.setGeometry(QtCore.QRect(10, 10, 420, 290))
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
-        self.label.setObjectName("label")
         self.ResultImg_layout.addWidget(self.resultImg_groupbox)
         self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(380, 350, 441, 191))
@@ -189,17 +182,12 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Morphing Program"))
         self.sourceImg_groupbox.setTitle(_translate("MainWindow", "Source Image"))
-        self.sourceImgPos_label.setText(_translate("MainWindow", "Source Image"))
         self.source_load_button.setText(_translate("MainWindow", "Load"))
-        self.source_draw_button.setText(_translate("MainWindow", "Draw"))
-        self.source_finish_button.setText(_translate("MainWindow", "Finish"))
+        self.source_clear_button.setText(_translate("MainWindow", "Clear"))
         self.target_load_button.setText(_translate("MainWindow", "Load"))
-        self.target_draw_button.setText(_translate("MainWindow", "Draw"))
-        self.target_finish_button.setText(_translate("MainWindow", "Finish"))
+        self.target_clear_button.setText(_translate("MainWindow", "Clear"))
         self.targetImg_groupbox.setTitle(_translate("MainWindow", "Target Image"))
-        self.targetImgPos_label.setText(_translate("MainWindow", "Target Image"))
         self.resultImg_groupbox.setTitle(_translate("MainWindow", "Result Image"))
-        self.label.setText(_translate("MainWindow", "Result Image"))
         self.time_label.setText(_translate("MainWindow", "time:"))
         self.second_label.setText(_translate("MainWindow", "s"))
         self.a_label.setText(_translate("MainWindow", "a:"))
@@ -210,13 +198,60 @@ class Ui_MainWindow(object):
         self.save_button.setText(_translate("MainWindow", "Save"))
         self.play_button.setText(_translate("MainWindow", "Play"))
 
+class Ui_AddEvent(QtWidgets.QMainWindow):
+    def __init__(self):
+         QtWidgets.QMainWindow.__init__(self)
+         self.ui=Ui_MainWindow()
+         self.ui.setupUi(self)
+
+         self.__addEvent()
+
+    def __addEvent(self):
+        self.ui.source_load_button.clicked.connect(lambda: self.__getImage(self.ui.sourceImg_PictureView))
+        self.ui.target_load_button.clicked.connect(lambda: self.__getImage(self.ui.targetImg_PictureView))
+
+        self.ui.source_clear_button.clicked.connect(lambda: self.__clearView(self.ui.sourceImg_PictureView))
+        self.ui.target_clear_button.clicked.connect(lambda: self.__clearView(self.ui.targetImg_PictureView))
+
+    def __getImage(self,PictureView):
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.DontUseNativeDialog
+        imgName, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Open Image',
+                                                           "..\\Image",
+                                                           "Image Files (*.png *.jpg *.bmp)",
+                                                           options=options)   
+        pixmap = QtGui.QPixmap(imgName)
+        pixItem = QtWidgets.QGraphicsPixmapItem(pixmap)
+        PictureView.scene().addItem(pixItem)
+    
+    def __clearView(self,PictureView):
+        PictureView.scene().clear()
+
+class PictureView(QtWidgets.QGraphicsView):
+    def __init__(self,parent):
+        QtWidgets.QGraphicsView.__init__(self)
+        self.setScene(QtWidgets.QGraphicsScene(self))
+        self.setSceneRect(QtCore.QRectF(self.viewport().rect()))
+
+    def mousePressEvent(self, event):
+        self._start = event.pos()
+
+    def mouseReleaseEvent(self, event):
+        start = QtCore.QPointF(self.mapToScene(self._start))
+        end = QtCore.QPointF(self.mapToScene(event.pos()))
+        
+        self.scene().addItem(
+            QtWidgets.QGraphicsLineItem(QtCore.QLineF(start, end)))        
+        
+        for point in (start, end):
+            text = self.scene().addSimpleText(
+                '(%d, %d)' % (point.x(), point.y()))
+            text.setBrush(QtCore.Qt.red)
+            text.setPos(point)
 
 if __name__ == "__main__":
-    import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    window = Ui_AddEvent()
+    window.show()
     sys.exit(app.exec_())
 

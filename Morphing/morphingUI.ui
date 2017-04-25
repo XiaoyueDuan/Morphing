@@ -38,28 +38,6 @@
        <property name="title">
         <string>Source Image</string>
        </property>
-       <widget class="QLabel" name="sourceImgPos_label">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>310</width>
-          <height>190</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Source Image</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::AutoText</enum>
-        </property>
-        <property name="scaledContents">
-         <bool>false</bool>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
       </widget>
      </item>
     </layout>
@@ -82,16 +60,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="source_draw_button">
+      <widget class="QPushButton" name="source_clear_button">
        <property name="text">
-        <string>Draw</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="source_finish_button">
-       <property name="text">
-        <string>Finish</string>
+        <string>Clear</string>
        </property>
       </widget>
      </item>
@@ -115,16 +86,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="target_draw_button">
+      <widget class="QPushButton" name="target_clear_button">
        <property name="text">
-        <string>Draw</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="target_finish_button">
-       <property name="text">
-        <string>Finish</string>
+        <string>Clear</string>
        </property>
       </widget>
      </item>
@@ -148,28 +112,6 @@
        <property name="title">
         <string>Target Image</string>
        </property>
-       <widget class="QLabel" name="targetImgPos_label">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>310</width>
-          <height>190</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Target Image</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::AutoText</enum>
-        </property>
-        <property name="scaledContents">
-         <bool>false</bool>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
       </widget>
      </item>
     </layout>
@@ -189,22 +131,6 @@
        <property name="title">
         <string>Result Image</string>
        </property>
-       <widget class="QLabel" name="resultImgPos_label">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>420</width>
-          <height>290</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Result Image</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
       </widget>
      </item>
     </layout>

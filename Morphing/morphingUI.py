@@ -313,11 +313,6 @@ class Ui_AddEvent(QtWidgets.QMainWindow):
         
         pixmap=QtGui.QPixmap(imgName)
         scaled_pixmap=pixmap.scaled(Pos_label.width(),Pos_label.height(), 1)
-        #pixmap.QtGui.QPixmap(Pos_label.width(),Pos_label.height())
-        
-        #pixmap.width=Pos_label.width()
-        #pixmap.height=Pos_label.height()
-
         Pos_label.setPixmap(scaled_pixmap)
 
 if __name__ == "__main__":
