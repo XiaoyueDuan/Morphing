@@ -252,7 +252,7 @@ class Calculator:
         """
         return newX-X
     
-    def X_PQdist(self,X,PQs,u):
+    def X_PQdist(self,X,u):
         """ 
         function description:
             calculate the distance from X to all PQs(perpendicular distance)
@@ -265,15 +265,13 @@ class Calculator:
         """
         distance=np.ones_like(u)
 
-        distance=np.abs(np.cross(X,Q-P))
+        distance=np.abs(np.cross(X,self.QminsP))
 
-        less0ind=u<0    
-        P=PQs[:,:2]        
-        distance[less0ind]=np.sum(np.linalg.norm((P[less0ind,:]-X),axis=1))
+        less0ind=u<0         
+        distance[less0ind]=np.sum(np.linalg.norm((self.P[less0ind,:]-X),axis=1))
 
         larger1ind=u>1
-        Q=PQs[:,2:]
-        distance[larger1ind]=np.sum(np.linalg.norm((Q[larger1ind,:]-X),axis=1))
+        distance[larger1ind]=np.sum(np.linalg.norm((self.Q[larger1ind,:]-X),axis=1))
         
         return distance
     
@@ -393,7 +391,7 @@ class TargetImage:
         newX_wise=self.__calculator.calNewX(u,v)
         D=self.__calculator.offset(newX_wise,X)
 
-        dist=self.__calculator.X_PQdist(X,,u)
+        dist=self.__calculator.X_PQdist(X,u)
         length=self.__calculator.PQlength()
         weight=self.weight(dist,length)
 
