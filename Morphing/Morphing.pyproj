@@ -37,6 +37,9 @@
     <Compile Include="uiTest.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI_assistant.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

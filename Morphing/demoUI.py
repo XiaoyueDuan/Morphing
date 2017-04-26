@@ -8,7 +8,10 @@
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from Morphing import Interface
+from Morphing import Interface, Morphing
+from scipy import misc
+from UI_assistant import Valid
+import numpy as np
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -27,12 +30,15 @@ class Ui_MainWindow(object):
 
         ##########################################################################
         self.SourceImg_layout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.SourceImg_layout.setContentsMargins(0, 0, 0, 0)
+        self.SourceImg_layout.setContentsMargins(5, 0, 5, 5)
         self.SourceImg_layout.setSpacing(10)
         self.SourceImg_layout.setObjectName("SourceImg_layout")
         self.sourceImg_groupbox = QtWidgets.QGroupBox(self.verticalLayoutWidget)
         self.sourceImg_groupbox.setObjectName("sourceImg_groupbox")        
-        self.SourceImg_layout.addWidget(self.sourceImg_groupbox)
+        self.sourceImg_groupbox.setLayout(self.SourceImg_layout);
+        self.sourceImg_groupbox.setGeometry(QtCore.QRect(0, 0, 
+                                                         self.verticalLayoutWidget.width(), 
+                                                         self.verticalLayoutWidget.height()))        
 
         self.sourceImg_PictureView=PictureView(self)
         self.sourceImg_PictureView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -70,12 +76,15 @@ class Ui_MainWindow(object):
 
         ##########################################################################
         self.TargetImg_layout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
-        self.TargetImg_layout.setContentsMargins(0, 0, 0, 0)
+        self.TargetImg_layout.setContentsMargins(5, 0, 5, 5)
         self.TargetImg_layout.setSpacing(10)
         self.TargetImg_layout.setObjectName("TargetImg_layout")
         self.targetImg_groupbox = QtWidgets.QGroupBox(self.verticalLayoutWidget_2)
         self.targetImg_groupbox.setObjectName("targetImg_groupbox")
-        self.TargetImg_layout.addWidget(self.targetImg_groupbox)
+        self.targetImg_groupbox.setLayout(self.TargetImg_layout)
+        self.targetImg_groupbox.setGeometry(QtCore.QRect(0, 0, 
+                                                         self.verticalLayoutWidget_2.width(), 
+                                                         self.verticalLayoutWidget_2.height()))
 
         self.targetImg_PictureView=PictureView(self)
         self.targetImg_PictureView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -106,11 +115,13 @@ class Ui_MainWindow(object):
         self.time_input_layout.addWidget(self.time_label)
         self.time_SpinBox = QtWidgets.QSpinBox(self.gridLayoutWidget)
         self.time_SpinBox.setObjectName("time_SpinBox")
+        self.time_SpinBox.setValue(2)
         self.time_input_layout.addWidget(self.time_SpinBox)
         self.second_label = QtWidgets.QLabel(self.gridLayoutWidget)
         self.second_label.setObjectName("second_label")
         self.time_input_layout.addWidget(self.second_label)
         self.Parameters_layout.addLayout(self.time_input_layout, 0, 1, 1, 1)
+
         self.a_input_layout = QtWidgets.QHBoxLayout()
         self.a_input_layout.setObjectName("a_input_layout")
         self.a_label = QtWidgets.QLabel(self.gridLayoutWidget)
@@ -122,8 +133,10 @@ class Ui_MainWindow(object):
         self.a_slider.setOrientation(QtCore.Qt.Horizontal)
         self.a_slider.setTickPosition(QtWidgets.QSlider.TicksBelow)
         self.a_slider.setObjectName("a_slider")
+        self.a_slider.setValue(5)
         self.a_input_layout.addWidget(self.a_slider)
         self.Parameters_layout.addLayout(self.a_input_layout, 0, 0, 1, 1)
+
         self.speed_input_layout = QtWidgets.QHBoxLayout()
         self.speed_input_layout.setObjectName("speed_input_layout")
         self.speed_label = QtWidgets.QLabel(self.gridLayoutWidget)
@@ -132,7 +145,10 @@ class Ui_MainWindow(object):
         self.speed_input_layout.addWidget(self.speed_label)
         self.speed_spinBox = QtWidgets.QSpinBox(self.gridLayoutWidget)
         self.speed_spinBox.setObjectName("speed_spinBox")
+        self.speed_spinBox.setValue(2)
         self.speed_input_layout.addWidget(self.speed_spinBox)
+
+
         self.frame_per_second_label = QtWidgets.QLabel(self.gridLayoutWidget)
         self.frame_per_second_label.setObjectName("frame_per_second_label")
         self.speed_input_layout.addWidget(self.frame_per_second_label)
@@ -150,6 +166,7 @@ class Ui_MainWindow(object):
         self.b_Slider.setOrientation(QtCore.Qt.Horizontal)
         self.b_Slider.setTickPosition(QtWidgets.QSlider.TicksBelow)
         self.b_Slider.setObjectName("b_Slider")
+        self.b_Slider.setValue(10)
         self.b_input_layout.addWidget(self.b_Slider)
         self.Parameters_layout.addLayout(self.b_input_layout, 1, 0, 1, 1)
         self.p_input_layout = QtWidgets.QHBoxLayout()
@@ -164,8 +181,10 @@ class Ui_MainWindow(object):
         self.p_Slider.setOrientation(QtCore.Qt.Horizontal)
         self.p_Slider.setTickPosition(QtWidgets.QSlider.TicksBelow)
         self.p_Slider.setObjectName("p_Slider")
+        self.p_Slider.setValue(50)
         self.p_input_layout.addWidget(self.p_Slider)
         self.Parameters_layout.addLayout(self.p_input_layout, 2, 0, 1, 1)
+
         self.Save_Play_buttons_input_layout = QtWidgets.QHBoxLayout()
         self.Save_Play_buttons_input_layout.setObjectName("Save_Play_buttons_input_layout")
         self.save_button = QtWidgets.QPushButton(self.gridLayoutWidget)
@@ -204,6 +223,10 @@ class Ui_MainWindow(object):
         self.play_button.setText(_translate("MainWindow", "Play"))
 
 class Ui_AddEvent(QtWidgets.QMainWindow):
+    aValue,bValue,pValue=range(3)
+    sourceImg,targetImg=range(3,5)
+    timeDur,fps=range(5,7)
+
     def __init__(self):
          QtWidgets.QMainWindow.__init__(self)
          self.ui=Ui_MainWindow()
@@ -211,53 +234,124 @@ class Ui_AddEvent(QtWidgets.QMainWindow):
 
          self.__addEvent()
          self.interface=Interface()
+         self.valid=Valid()
 
     def __addEvent(self):
-        self.ui.source_load_button.clicked.connect(lambda: self.__getImage(self.ui.sourceImg_PictureView))
-        self.ui.target_load_button.clicked.connect(lambda: self.__getImage(self.ui.targetImg_PictureView))
+        # button
+        self.ui.source_load_button.clicked.connect(lambda: self.__getImage(self.ui.sourceImg_PictureView,
+                                                                           Ui_AddEvent.sourceImg))
+        self.ui.target_load_button.clicked.connect(lambda: self.__getImage(self.ui.targetImg_PictureView,
+                                                                           Ui_AddEvent.targetImg))
 
-        self.ui.source_clear_button.clicked.connect(lambda: self.__clearView(self.ui.sourceImg_PictureView))
-        self.ui.target_clear_button.clicked.connect(lambda: self.__clearView(self.ui.targetImg_PictureView))
+        self.ui.source_clear_button.clicked.connect(lambda: self.__clearView(self.ui.sourceImg_PictureView,
+                                                                             Ui_AddEvent.sourceImg))
+        self.ui.target_clear_button.clicked.connect(lambda: self.__clearView(self.ui.targetImg_PictureView,
+                                                                             Ui_AddEvent.targetImg))
+        self.ui.play_button.clicked.connect(self.__generate_play_Event)
 
-        
-        self.ui.a_slider.valueChanged.connect(lambda:self.__getScollBarValue(self.ui.a_slider,self.ui.a_label))        
+        # parameters
+        a_scale=1
+        self.ui.a_slider.valueChanged.connect(lambda:self.__getScollBarValue(self.ui.a_slider,self.ui.a_label,
+                                                                             a_scale, Ui_AddEvent.aValue))        
         b_scale=10
-        self.ui.b_Slider.valueChanged.connect(lambda:self.__getScollBarValue(self.ui.b_Slider,self.ui.b_label,b_scale))
+        self.ui.b_Slider.valueChanged.connect(lambda:self.__getScollBarValue(self.ui.b_Slider,self.ui.b_label,
+                                                                             b_scale, Ui_AddEvent.bValue))
         p_scale=self.ui.p_Slider.maximum()
-        self.ui.p_Slider.valueChanged.connect(lambda:self.__getScollBarValue(self.ui.p_Slider,self.ui.p_label,p_scale))
+        self.ui.p_Slider.valueChanged.connect(lambda:self.__getScollBarValue(self.ui.p_Slider,self.ui.p_label,
+                                                                             p_scale, Ui_AddEvent.pValue))
 
-        self.ui.time_SpinBox.valueChanged.connect(lambda:self.__getSpinBoxValue(self.ui.time_SpinBox))
-        self.ui.speed_spinBox.valueChanged.connect(lambda:self.__getSpinBoxValue(self.ui.speed_spinBox))
+        self.ui.time_SpinBox.valueChanged.connect(lambda:self.__getSpinBoxValue(self.ui.time_SpinBox,Ui_AddEvent.timeDur))
+        self.ui.speed_spinBox.valueChanged.connect(lambda:self.__getSpinBoxValue(self.ui.speed_spinBox,Ui_AddEvent.fps))        
 
-    def __getImage(self,PictureView):
+    def __getImage(self,PictureView,imgType):
         options = QtWidgets.QFileDialog.Options()
         options |= QtWidgets.QFileDialog.DontUseNativeDialog
         imgName, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Open Image',
                                                            "..\\Image",
                                                            "Image Files (*.png *.jpg *.bmp)",
-                                                           options=options)   
+                                                           options=options)  
         pixmap = QtGui.QPixmap(imgName)
         scaled_pixmap=pixmap.scaled(PictureView.width(),PictureView.height(), 1)
         pixItem = QtWidgets.QGraphicsPixmapItem(scaled_pixmap)        
 
         PictureView.scene().addItem(pixItem)
-        self.interface.setSourceImg(pixmap)
+        
+        # set image to self.interface
+        img=misc.imread(imgName)
+        if imgType==Ui_AddEvent.sourceImg:
+            self.interface.setSourceImg(img)
+            self.valid.loadSourceImg=True
+        elif imgType==Ui_AddEvent.targetImg:
+            self.interface.setTargetImg(img)      
+            self.valid.loadTargetImg=True  
     
-    def __clearView(self,PictureView):
+    def __clearView(self,PictureView,imgType):
+        # Clear displaying
         PictureView.scene().clear()
 
-    def __getScollBarValue(self,ScollBar,ChangeWeidge,scale=1):
+        # Clear start or terminate positions
+        if imgType==Ui_AddEvent.sourceImg:
+            self.interface.setStartPos(Empty_signal=True)
+            self.valid.loadSourceImg=False
+        elif imgType==Ui_AddEvent.sourceImg:
+            self.interface.setTargetImg(Empty_signal=True)  
+            self.valid.loadTargetImg=False
+
+    def __getScollBarValue(self,ScollBar,ChangeWeidge,scale=1,valueTpye=0):
         value=float(ScollBar.value())/float(scale)
         ChangeWeidge.setText(str(value))
 
-    def __getSpinBoxValue(self,SpinBox,scale=1):
-        print(SpinBox.value())    
+        if valueTpye==Ui_AddEvent.aValue:
+            self.interface.setA(value)
+        elif valueTpye==Ui_AddEvent.bValue:
+            self.interface.setB(value)
+        elif valueTpye==Ui_AddEvent.pValue:
+            self.interface.setP(value)
+
+    def __getSpinBoxValue(self,SpinBox,spinType):
+        value=SpinBox.value()
+        if spinType==Ui_AddEvent.timeDur:
+            self.interface.setA(value)
+        elif spinType==Ui_AddEvent.fps:
+            self.interface.setA(value)
+
+    def __generate_play_Event(self):
+        # 1. pass all value in self.interface
+        #self.interface.setStartPos(self.ui.sourceImg_PictureView.position)
+        #self.interface.setTerminatePos(self.ui.targetImg_PictureView.position)
+
+        self.interface.setStartPos(
+            np.array([[  -1.,   -1.,   -1.,   -1.],
+                   [  94.,    6.,   71.,   32.],
+                   [  60.,   71.,   66.,   99.],
+                   [ 140.,   14.,  171.,   36.],
+                   [ 171.,   70.,  160.,   92.]]))
+        self.interface.setTerminatePos(
+            np.array([[  -1.,   -1.,   -1.,   -1.],
+                   [ 126.,   27.,   98.,   44.],
+                   [  83.,   89.,   87.,  107.],
+                   [ 161.,   27.,  178.,   41.],
+                   [ 192.,   76.,  179.,  112.]]))
+
+        # 2. check wether the value is valid
+        valid_flag=self.valid.isValid(self.interface)
+        
+        # 3. generate result 
+        if valid_flag:
+            runMor=Morphing(self.interface)
+            runMor.LinerMorphing()
+
+
+        # 4. display in the result groupbox
+
 
 class PictureView(QtWidgets.QGraphicsView):
     def __init__(self,parent):
         QtWidgets.QGraphicsView.__init__(self)
         self.setScene(QtWidgets.QGraphicsScene(self))
         self.setSceneRect(QtCore.QRectF(self.viewport().rect()))
+        self.nPoint=1
+        self.position=np.array([[-1,-1,-1,-1]]) 
 
     def mousePressEvent(self, event):
         self._start = event.pos()
@@ -265,15 +359,25 @@ class PictureView(QtWidgets.QGraphicsView):
     def mouseReleaseEvent(self, event):
         start = QtCore.QPointF(self.mapToScene(self._start))
         end = QtCore.QPointF(self.mapToScene(event.pos()))
+       
+        if start!=end:        
+            self.scene().addItem(
+                QtWidgets.QGraphicsLineItem(QtCore.QLineF(start, end)))        
+
+            self.position=np.concatenate((self.position, 
+                                          np.array([[start.x(),start.y(),end.x(),end.y()]])), 
+                                          axis=0)
         
-        self.scene().addItem(
-            QtWidgets.QGraphicsLineItem(QtCore.QLineF(start, end)))        
-        
-        for point in (start, end):
-            text = self.scene().addSimpleText(
-                '(%d, %d)' % (point.x(), point.y()))
+            text=self.scene().addSimpleText('(%d)' % self.nPoint)
             text.setBrush(QtCore.Qt.red)
-            text.setPos(point)
+            text.setPos(start)
+            self.nPoint+=1
+            #for point in (start, end):
+            #    text = self.scene().addSimpleText(
+            #        '(%d, %d)' % (point.x(), point.y()))
+            #    text.setBrush(QtCore.Qt.red)
+            #    text.setPos(point)
+            
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

@@ -24,12 +24,16 @@ class Interface:
         self.startPos=np.array([[-1,-1,-1,-1]])
         self.terminatePos=np.array([[-1,-1,-1,-1]])
         
-        self.a=0
-        self.b=0
-        self.p=0
+        self.a=5
+        self.b=1.0
+        self.p=0.5
         
-        self.framePerSecond=0
-        self.timeDur=0
+        self.framePerSecond=2
+        self.timeDur=2
+
+        self.savePath='../Results/'
+        self.sourceImgName="source"     
+        self.targetImgName="target"  
 
     def convertImg(self,rawSourImg,rawTarImg):
         self.sourceImg=rawSourImg
@@ -50,25 +54,31 @@ class Interface:
     def setTimeDur(self,timeDur):
         self.timeDur=timeDur
 
-    def setStartPos(Pos=None,Empty_signal=False):
+    def setStartPos(self,Pos=None,Empty_signal=False):
+        """
+        Function Description;
+            Set start position
+        """
         if Empty_signal:
             self.startPos=np.array([[-1,-1,-1,-1]]) 
             return
         self.startPos=np.concatenate((self.startPos, Pos), axis=0)
+        self.startPos=self.startPos[2:,:]
 
-    def setTerminatePos(Pos=None,Empty_signal=False):
+    def setTerminatePos(self,Pos=None,Empty_signal=False):
         if Empty_signal:
             self.terminatePos=np.array([[-1,-1,-1,-1]])
             return
         self.terminatePos=np.concatenate((self.terminatePos,Pos),axis=0)
+        self.terminatePos=self.terminatePos[2:,:]
 
     def setSourceImg(self,SourceImg):
         self.sourceImg=SourceImg
     
     def setTargetImg(self,TargetImg):
-        self.targetImg=TargetImage
+        self.targetImg=TargetImg
 
-class morphing:
+class Morphing:
     def __init__(self, dis_inter_alg):
         """
         Function Description:
@@ -92,9 +102,9 @@ class morphing:
         
         self.morphSize=dis_inter_alg.framePerSecond*dis_inter_alg.timeDur   
         
-        self.__savePath=""
-        self.__sourceImgName=""     
-        self.__targetImgName=""     
+        self.__savePath=dis_inter_alg.savePath
+        self.__sourceImgName=dis_inter_alg.sourceImgName
+        self.__targetImgName=dis_inter_alg.targetImgName
         
     def setImgName(self,path):
         """
@@ -157,7 +167,7 @@ class interpolator:
             ratio: float
         """
         if method=="liner":
-            return sourcePos*(1-ratio)+targetPos*ratio
+            return sourcePos*ratio+targetPos*(1-ratio)
         else:
             return -1 #Need to be completed!
             
@@ -171,15 +181,15 @@ class Calculator:
             sourcePos: n*4 narray 
             targetPos: n*4 narray 
         """
-        self.P=sourcePos[:,0:1]
-        self.Q=sourcePos[:,2:3]    
+        self.P=sourcePos[:,0:2]
+        self.Q=sourcePos[:,2:]    
         self.QminsP=self.Q-self.P
-        self.QPdist=np.linalg.norm(self.QminsP)
+        self.QPdist=np.linalg.norm(self.QminsP,axis=1)
         
-        self.tP=targetPos[:,0:1]
-        self.tQ=targetPos[:,2:3]
+        self.tP=targetPos[:,0:2]
+        self.tQ=targetPos[:,2:]
         self.tQminstP=self.tQ-self.tP
-        self.tQPdist=np.linalg.norm(self.tQminstP)
+        self.tQPdist=np.linalg.norm(self.tQminstP,axis=1)
         
     def calU(self,X):
         """
@@ -192,7 +202,7 @@ class Calculator:
         QminusP=X-self.Q
         QPdist_square=np.square(self.QPdist)
         
-        u=np.dot(XminusP,QminusP)/QPdist_square
+        u=np.sum(np.multiply(XminusP,QminusP),axis=1)/QPdist_square
         return u
         
     def calV(self,X):
@@ -205,9 +215,10 @@ class Calculator:
         XminusP=X-self.P
         
         ortho=Perpend()
+        tmp=X-self.Q
         OrthoQminusP=ortho.perpendicular(X-self.Q)
         
-        v=np.dot(XminusP,OrthoQminusP)/self.QPdist
+        v=np.sum(np.multiply(XminusP,OrthoQminusP),axis=1)/self.QPdist
         return v
     
     def calNewX(self,u,v):
@@ -223,7 +234,10 @@ class Calculator:
         ortho=Perpend()
         OrthoQminusP=ortho.perpendicular(self.tQminstP)
         
-        newX=self.tP+np.dot(u,self.tQminstP)+np.dot(v,OrthoQminusP)/self.tQPdist
+        u=u.reshape(-1,1)
+        v=v.reshape(-1,1)
+        tQPdist=self.tQPdist.reshape(-1,1)
+        newX=self.tP+np.multiply(u,self.tQminstP)+np.multiply(v,OrthoQminusP)/tQPdist
         return newX
     
     def offset(self,newX,X):
@@ -238,16 +252,29 @@ class Calculator:
         """
         return newX-X
     
-    def X_PQdist(self,X):
+    def X_PQdist(self,X,PQs,u):
         """ 
         function description:
             calculate the distance from X to all PQs(perpendicular distance)
         input:
             X=[x,y]
+            PQs- (n,4) int narray, represents the line PQ
+            u- (n,) float narray
         return:
             distance- a (n,) narray
         """
-        distance=np.abs(np.cross(X,self.QminP))
+        distance=np.ones_like(u)
+
+        distance=np.abs(np.cross(X,Q-P))
+
+        less0ind=u<0    
+        P=PQs[:,:2]        
+        distance[less0ind]=np.sum(np.linalg.norm((P[less0ind,:]-X),axis=1))
+
+        larger1ind=u>1
+        Q=PQs[:,2:]
+        distance[larger1ind]=np.sum(np.linalg.norm((Q[larger1ind,:]-X),axis=1))
+        
         return distance
     
     def PQlength(self):
@@ -265,23 +292,29 @@ class Perpend:
     """
     Calculate: Perpendicular(Q-P), which is orthogonal to (Q-P) as well as same length of (Q-P)
     """
-    def perpendicular(vectors):
-       length=np.linalg.norm(vectors)
-       perpend_vectors=np.ones((vectors.shape))
+    def perpendicular(self,vectors):
+       #length=np.linalg.norm(vectors,axis=1)
+       #perpend_vectors=np.ones((vectors.shape))
        
-       horInd=(vectors[:,1]==0)
-       perpend_vectors[horInd,0]=0
-       perpend_vectors[horInd,1]=length[horInd]
+       #horInd=(vectors[:,1]==0)
+       #perpend_vectors[horInd,0]=0
+       #perpend_vectors[horInd,1]=length[horInd]
        
-       verInd=(vectors[:,0]==0)
-       perpend_vectors[verInd,1]=0
-       perpend_vectors[horInd,0]=length[verInd]
+       #verInd=(vectors[:,0]==0)
+       #perpend_vectors[verInd,1]=0
+       #perpend_vectors[horInd,0]=length[verInd]
        
-       valInd=np.logical_not(horInd | verInd)
-       # suppose the first columns value = 1
-       perpend_vectors[valInd,1]=-perpend_vectors[valInd,0]/perpend_vectors[valInd,1]
+       #valInd=np.logical_not(horInd | verInd)
+       ## suppose the first columns value = 1
+       #perpend_vectors[valInd,1]=-vectors[valInd,0]/vectors[valInd,1]
                       
-       perpend_vectors=perpend_vectors/np.linalg.norm(perpend_vectors)*length
+       #length=length.reshape(-1,1)
+       #perpend_norms=np.linalg.norm(perpend_vectors,axis=1).reshape(-1,1)
+       #perpend_vectors=perpend_vectors/perpend_norms*length
+
+       perpend_vectors=np.ones((vectors.shape))
+       perpend_vectors[:,0]=-vectors[:,1]
+       perpend_vectors[:,1]=vectors[:,0]
        
        # only valid ones will calculate its perpendicular vector
        return perpend_vectors    
@@ -360,7 +393,7 @@ class TargetImage:
         newX_wise=self.__calculator.calNewX(u,v)
         D=self.__calculator.offset(newX_wise,X)
 
-        dist=self.__calculator.X_PQdist(X)
+        dist=self.__calculator.X_PQdist(X,,u)
         length=self.__calculator.PQlength()
         weight=self.weight(dist,length)
 
@@ -386,12 +419,3 @@ class TargetImage:
         weight=np.power(r3,self.__b)       # ( (length)^p / (a+dist) )^b    
 
         return weight
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
