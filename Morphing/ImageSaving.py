@@ -5,6 +5,7 @@ Created on Sun Apr 19 9:50:22 2017
 @author: Xiaoyue Duan 
 """
 from scipy.misc import imsave
+import numpy as np
 
 class ImageSaver:
     """
@@ -58,3 +59,4 @@ class BatchImageSaving:
             n- int, the order of batch iamges sequence
         """
         self.__imgSaver.save(image,self.__startname+str(n))
+

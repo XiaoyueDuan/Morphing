@@ -63,6 +63,13 @@ class Valid():
             print('Error: Have not loaded source image')
             valid=False
 
+        if interface.startPos.shape[0]<=0:
+            print('Error: No input source image lines')
+            valid=False
+        if interface.terminatePos.shape[0]<=0:
+            print('Error: No input target image lines')
+            valid=False
+
         if interface.startPos.shape[1]!=4:
             print('Error: The number of column of source image is not equal to 4')
             valid=False
