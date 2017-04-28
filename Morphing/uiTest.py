@@ -97,6 +97,7 @@
 #    window.show()
 #    sys.exit(app.exec_())
 
+# Save images by matplotlib and imagemagick, though Failed
 import matplotlib.pyplot as plt 
 from matplotlib import animation
 import cv2
@@ -111,59 +112,35 @@ def load_all_images(dir):
             imgs.append(img)
     return imgs
 
-#def build_gif(imgs, show_gif=True, save_gif=True, title=''):
-#    fig = plt.figure()
-#    ax = fig.add_subplot(111)
-#    ax.set_axis_off()
+def build_gif(imgs, show_gif=True, save_gif=True, title=''):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.set_axis_off()
 
-#    def animate(i):
-#        ax.imshow(imgs[i])
+    def animate(i):
+        ax.imshow(imgs[i])
 
-#    anim = animation.FuncAnimation(fig, animate, frames=len(imgs), interval=200, blit=True)
+    anim = animation.FuncAnimation(fig, animate, frames=len(imgs), interval=200, blit=True)
      
-#    #ims = map(lambda x: (ax.imshow(x), ax.set_title(title)), imgs)
-#    #im_ani = animation.ArtistAnimation(fig, ims, interval=800, repeat_delay=0, blit=False)
+    #ims = map(lambda x: (ax.imshow(x), ax.set_title(title)), imgs)
+    #im_ani = animation.ArtistAnimation(fig, ims, interval=800, repeat_delay=0, blit=False)
 
-#    if save_gif:
-#        anim.save('animation.gif', writer='imagemagick')
+    if save_gif:
+        anim.save('animation.gif', writer='imagemagick')
 
-#    if show_gif:
-#        plt.show()
+    if show_gif:
+        plt.show()
 
-#    return
+    return
 
-#images=load_all_images('../Results/')
-#build_gif(images)
+images=load_all_images('../Results/')
+build_gif(images)
 
 
-%matplotlib inline
-import numpy as np
-import matplotlib.pyplot as plt
+from PIL import Image
+import os
+file_names=sorted((fn for fn in os.listdir(self.interface.savePath) if fn.endswith('.jpg')))
+images=[Image.open(self.interface.savePath+fn) for fn in file_names]
 
-from matplotlib import animation
-
-# First set up the figure, the axis, and the plot element we want to animate
-fig, ax = plt.subplots()
-
-ax.set_xlim(( 0, 2))
-ax.set_ylim((-2, 2))
-
-line, = ax.plot([], [], lw=2)
-
-# initialization function: plot the background of each frame
-def init():
-    line.set_data([], [])
-    return (line,)
-
-# animation function. This is called sequentially
-def animate(i):
-    x = np.linspace(0, 2, 1000)
-    y = np.sin(2 * np.pi * (x - 0.01 * i))
-    line.set_data(x, y)
-    return (line,)
-
-# call the animator. blit=True means only re-draw the parts that 
-# have changed.
-anim = animation.FuncAnimation(fig, animate, init_func=init,
-                               frames=100, interval=20, blit=True)
-anim.save('D:\line.gif', dpi=80, writer='imagemagick')
+resultName=self.interface.resultImgName+".gif"
+writeGif(resultName,images,duration=1)

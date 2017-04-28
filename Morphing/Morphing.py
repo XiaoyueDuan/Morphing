@@ -114,6 +114,7 @@ class Morphing:
         self.__savePath=dis_inter_alg.savePath
         self.__sourceImgName=dis_inter_alg.sourceImgName
         self.__targetImgName=dis_inter_alg.targetImgName
+        self.__resultImgName=dis_inter_alg.resultImgName
         
     def setImgName(self,path):
         """

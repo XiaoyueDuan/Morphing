@@ -12,7 +12,8 @@ from Morphing import Interface, Morphing
 from scipy import misc
 from UI_assistant import Valid
 import numpy as np
-from images2gif import writeGif
+import os
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -31,7 +32,7 @@ class Ui_MainWindow(object):
 
         ##########################################################################
         self.SourceImg_layout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.SourceImg_layout.setContentsMargins(5, 0, 5, 5)
+        self.SourceImg_layout.setContentsMargins(0, 0, 0, 0)
         self.SourceImg_layout.setSpacing(10)
         self.SourceImg_layout.setObjectName("SourceImg_layout")
         self.sourceImg_groupbox = QtWidgets.QGroupBox(self.verticalLayoutWidget)
@@ -77,7 +78,7 @@ class Ui_MainWindow(object):
 
         ##########################################################################
         self.TargetImg_layout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
-        self.TargetImg_layout.setContentsMargins(5, 0, 5, 5)
+        self.TargetImg_layout.setContentsMargins(0, 0, 0, 0)
         self.TargetImg_layout.setSpacing(10)
         self.TargetImg_layout.setObjectName("TargetImg_layout")
         self.targetImg_groupbox = QtWidgets.QGroupBox(self.verticalLayoutWidget_2)
@@ -243,6 +244,7 @@ class Ui_AddEvent(QtWidgets.QMainWindow):
          self.__addEvent()
          self.interface=Interface()
          self.valid=Valid()
+         self.playNumber=-1
 
     def __addEvent(self):
         # button
@@ -292,9 +294,22 @@ class Ui_AddEvent(QtWidgets.QMainWindow):
             if imgType==Ui_AddEvent.sourceImg:
                 self.interface.setSourceImg(img)
                 self.valid.loadSourceImg=True
+                self.__resizeLayout(scaled_pixmap,self.ui.SourceImg_layout,imgType)
             elif imgType==Ui_AddEvent.targetImg:
                 self.interface.setTargetImg(img)      
                 self.valid.loadTargetImg=True  
+                self.__resizeLayout(scaled_pixmap,self.ui.TargetImg_layout,imgType)                
+
+    def __resizeLayout(self,pixmap,layout,imgType):
+        layout_geometry=layout.contentsRect()
+        image_geometry=pixmap.size()
+
+        left_right=np.ceil((layout_geometry.width()-image_geometry.width())/2)
+        top_bottom=np.ceil((layout_geometry.height()-image_geometry.height())/2)
+        if imgType==Ui_AddEvent.sourceImg:
+            self.ui.SourceImg_layout.setContentsMargins(left_right, top_bottom, left_right, top_bottom)
+        elif imgType==Ui_AddEvent.targetImg:
+            self.ui.TargetImg_layout.setContentsMargins(left_right, top_bottom, left_right, top_bottom)
     
     def __clearView(self,PictureView,imgType):
         # Clear displaying
@@ -332,19 +347,6 @@ class Ui_AddEvent(QtWidgets.QMainWindow):
         self.interface.setStartPos(self.ui.sourceImg_PictureView.position)
         self.interface.setTerminatePos(self.ui.targetImg_PictureView.position)
 
-        #self.interface.setStartPos(
-        #    np.array([[  -1.,   -1.,   -1.,   -1.],
-        #           [  94.,    6.,   71.,   32.],
-        #           [  60.,   71.,   66.,   99.],
-        #           [ 140.,   14.,  171.,   36.],
-        #           [ 171.,   70.,  160.,   92.]]))
-        #self.interface.setTerminatePos(
-        #    np.array([[  -1.,   -1.,   -1.,   -1.],
-        #           [ 126.,   27.,   98.,   44.],
-        #           [  83.,   89.,   87.,  107.],
-        #           [ 161.,   27.,  178.,   41.],
-        #           [ 192.,   76.,  179.,  112.]]))
-
         # 2. check wether the value is valid
         valid_flag=self.valid.isValid(self.interface)
         
@@ -352,33 +354,25 @@ class Ui_AddEvent(QtWidgets.QMainWindow):
         if valid_flag:
             runMor=Morphing(self.interface)
             runMor.LinerMorphing()         
-            
-            #from PIL import Image
-            #import os
-            #file_names=sorted((fn for fn in os.listdir(self.interface.savePath) if fn.endswith('.jpg')))
-            #images=[Image.open(fn) for fn in file_names]
-
-            #resultName=self.interface.resultImgName+'.GIF'
-            #writeGif(resultName,images,duration=self.interface.timeDur)
+            # 4. could display in the result groupbox
+            self.playNumber=0
 
     def __play_Event(self,label,type='.jpg'):
         # 4. display in the result groupbox
-        #n=(self.interface.framePerSecond+2)*self.interface.timeDur
-        #freq=1/float(self.interface.framePerSecond)
-        #for i in range(n):
-        #    fullname=self.interface.savePath+self.interface.resultImgName+str(i)+type
-        #    pixmap=QtGui.QPixmap(fullname)
-        #    scaled_pixmap=pixmap.scaled(label.width(),label.height(), 1)
-        #    label.setPixmap(scaled_pixmap)            
-        #    sleep(freq)
-        
-        from PIL import Image
-        import os
-        file_names=sorted((fn for fn in os.listdir(self.interface.savePath) if fn.endswith('.jpg')))
-        images=[Image.open(self.interface.savePath+fn) for fn in file_names]
+        if self.playNumber<0:
+            print("Please generate results first(Click Generate button).")
+            return
 
-        resultName=self.interface.resultImgName+".GIF"
-        writeGif(resultName,images,duration=0.1)
+        file_names=sorted((fn for fn in os.listdir(self.interface.savePath) if fn.endswith('.jpg')))
+        n=len(file_names)
+        i=self.playNumber
+
+        fullname=self.interface.savePath+file_names[i]
+        pixmap=QtGui.QPixmap(fullname)
+        scaled_pixmap=pixmap.scaled(label.width(),label.height(), 1)
+        label.setPixmap(scaled_pixmap) 
+
+        self.playNumber=(self.playNumber+1)%n  
 
 class PictureView(QtWidgets.QGraphicsView):
     def __init__(self,parent):
@@ -403,16 +397,15 @@ class PictureView(QtWidgets.QGraphicsView):
                                           np.array([[start.x(),start.y(),end.x(),end.y()]])), 
                                           axis=0)
         
-            #text=self.scene().addSimpleText('(%d)' % self.nPoint)
-            #text.setBrush(QtCore.Qt.red)
-            #text.setPos(start)
+            text=self.scene().addSimpleText('(%d)' % self.nPoint)
+            text.setBrush(QtCore.Qt.red)
+            text.setPos(start)
             self.nPoint+=1
-            for point in (start, end):
-                text = self.scene().addSimpleText(
-                    '(%d, %d)' % (point.x(), point.y()))
-                text.setBrush(QtCore.Qt.red)
-                text.setPos(point)
-            
+            #for point in (start, end):
+            #    text = self.scene().addSimpleText(
+            #        '(%d, %d)' % (point.x(), point.y()))
+            #    text.setBrush(QtCore.Qt.red)
+            #    text.setPos(point)            
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
