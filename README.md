@@ -25,7 +25,7 @@ User interface can be divided into 4 parts, they are source image area, target i
 
 ### Usage
 1. Run the project and then the initial interface shows up.
-![initialUI](/AnimationReadMe_Picture/initialUI.PNG)
+![initialUI](/AnimationReadMe_Picture/Initlialize.PNG)
 2. Load source and target image in source and target image area respectively by clicking Load button. Then select the image in file dialog.
 ![load](/AnimationReadMe_Picture/load.PNG)
 3. After loading two pictures, user can draw depending lines both on source and target image area. There will be a number lying near the start point of the line as a prompt indicating the drawing order. **Please note the number of lines on source and target image should be equal.**
